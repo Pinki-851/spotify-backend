@@ -13,7 +13,8 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/users", require("./src/routes/userRoute"));
+app.use("/api/auth", require("./src/routes/auth"));
+app.use("/api/song", require("./src/routes/song"));
 
 app.use((req, res) => {
   res.status(400).send("sorry, cann't find that");

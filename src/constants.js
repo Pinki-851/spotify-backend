@@ -5,3 +5,7 @@ exports.Constants = {
   FORBIDDEN: 403,
   SERVER_ERR: 500,
 };
+
+exports.ENV_VARIABLE = {
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+};
