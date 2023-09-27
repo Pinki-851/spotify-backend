@@ -2,7 +2,7 @@
 // playlist:name,thumbnail,songs,owner,collabrator
 const mongoose = require("mongoose");
 
-const song = new mongoose.Schema(
+const Song = new mongoose.Schema(
   {
     name: { type: String, default: "", required: true },
     songs: [{ type: String, required: true }],
@@ -19,4 +19,4 @@ const song = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Song", song);
+module.exports = mongoose.model("Song", Song);

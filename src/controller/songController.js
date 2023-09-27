@@ -1,4 +1,4 @@
-const { song } = require("../model");
+const { Song } = require("../model");
 
 const createSong = async (req, res, next) => {
   try {
@@ -8,7 +8,7 @@ const createSong = async (req, res, next) => {
       return res.status(400).send({ message: "Missing fields" });
     }
 
-    const created_song = await song.create({
+    const created_song = await Song.create({
       name,
       track,
       thumbnail,
@@ -25,16 +25,39 @@ const createSong = async (req, res, next) => {
 };
 
 const updateSong = async (req, res, next) => {
-  const id = req.params.id;
-  const userId = req.user.userId;
+  try {
+    const id = req.params.id;
+    const userId = req.user.userId;
+    const body = req.body;
+
+    const found_Song = await Song.findByIdAndUpdate({ _id: id }, body, {
+      new: true,
+    });
+
+    if (!found_Song) {
+      return res.status(400).send("not found");
+    }
+    if (found_Song.artist.toString() !== userId) {
+      return res
+        .status(400)
+        .send("you are not autorized to perform this action");
+    }
+    await found_Song.save();
+    return res
+      .status(200)
+      .json({ message: "updated successfully", song: found_Song });
+  } catch (error) {
+    next(error);
+    throw new Error(error);
+  }
 };
 
 const getSongByID = async (req, res, next) => {
   try {
-    const id = req.params.id;
+    const id = req.params.userid;
     const userId = req.user.userId;
 
-    const found_Song = await song.findById({ _id: id });
+    const found_Song = await Song.findById({ _id: id });
     if (!found_Song) {
       return res.status(400).send("not found");
     }
@@ -50,14 +73,30 @@ const getSongByID = async (req, res, next) => {
   }
 };
 const getSongByUserID = async (req, res, next) => {
-  const id = req.params.userid;
-  const userId = req.user.userId;
+  try {
+    const id = req.params.id;
+    const userId = req.user.userId;
+
+    const found_Song = await Song.findById({ _id: id });
+    if (!found_Song) {
+      return res.status(400).send("not found");
+    }
+    if (found_Song.artist.toString() !== userId) {
+      return res
+        .status(400)
+        .send("you are not autorized to perform this action");
+    }
+    return res.status(200).json({ song: found_Song });
+  } catch (error) {
+    next(error);
+    throw new Error(error);
+  }
 };
 
 const getAllSong = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const songs = await song.find();
+    const songs = await Song.find();
     return res.status(200).json({ songs });
   } catch (error) {
     next(error);
@@ -69,7 +108,7 @@ const deleteSong = async (req, res, next) => {
   try {
     const id = req.params.id;
     const userId = req.user.userId;
-    const found_song = await song.findById({ _id: id });
+    const found_song = await Song.findById({ _id: id });
     if (!found_song) {
       return res.status(400).send("not found");
     }
@@ -79,7 +118,7 @@ const deleteSong = async (req, res, next) => {
         .send("you are not autorized to perform this action");
     }
 
-    const deletedSong = await song.deleteOne({ _id: found_song._id });
+    const deletedSong = await Song.deleteOne({ _id: found_song._id });
     return res
       .status(200)
       .json({ message: "deleted successfully", song: deletedSong });

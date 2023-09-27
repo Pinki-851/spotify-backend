@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const playList = new mongoose.Schema(
+const PlayList = new mongoose.Schema(
   {
     name: { type: String, default: "" },
     songs: [{ type: mongoose.Types.ObjectId, ref: "song" }],
@@ -15,4 +15,4 @@ const playList = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Playlist", playList);
+module.exports = mongoose.model("Playlist", PlayList);

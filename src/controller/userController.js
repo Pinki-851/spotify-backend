@@ -1,4 +1,4 @@
-const { user } = require("../model");
+const { User } = require("../model");
 const jwt = require("jsonwebtoken");
 const generateUniqueId = require("../utils/generateId");
 
@@ -9,7 +9,7 @@ const createUser = async (req, res, next) => {
     if (!firstname || !lastname || !username || !password || !email) {
       return res.status(400).send({ message: "missing fields", status: 400 });
     }
-    const existing_user = await user.findOne({ email });
+    const existing_user = await User.findOne({ email });
 
     if (existing_user) {
       return res.status(400).send({ message: "User alreay exist" });
@@ -17,11 +17,11 @@ const createUser = async (req, res, next) => {
 
     let uniqueId = generateUniqueId();
 
-    const user_with_id = await user.findOne({ usserId: uniqueId });
+    const user_with_id = await User.findOne({ usserId: uniqueId });
 
     while (user_with_id) {
       uniqueId = generateUniqueId();
-      user_with_id = await user.findOne({ usserId: uniqueId });
+      user_with_id = await User.findOne({ usserId: uniqueId });
     }
 
     const new_pass = await bcrypt.hash(password, 10);
@@ -34,7 +34,7 @@ const createUser = async (req, res, next) => {
         expiresIn: "1d",
       }
     );
-    const finalUser = await user.create({
+    const finalUser = await User.create({
       email,
       firstname,
       lastname,
@@ -57,7 +57,7 @@ const userLogin = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).send("missing fields");
     }
-    const found_user = await user.findOne({ email });
+    const found_user = await User.findOne({ email });
     if (!found_user) {
       return res.status(400).send("no such user found");
     }
@@ -80,7 +80,7 @@ const updateUser = async (req, res, next) => {
   try {
     const body = req.body;
     const user_id = req.params.id;
-    const found_user = await user.findByIdAndUpdate({ userId: user_id }, body, {
+    const found_user = await User.findByIdAndUpdate({ userId: user_id }, body, {
       new: true,
     });
 
@@ -108,7 +108,7 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const user_id = req.params.id;
-    const found_user = await user.findById({ userId: user_id });
+    const found_user = await User.findById({ userId: user_id });
 
     if (!found_user) {
       return res.status(400).send("no such user found");

@@ -8,4 +8,5 @@ exports.Constants = {
 
 exports.ENV_VARIABLE = {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  MONGO_URL: process.env.MONGO_URL,
 };

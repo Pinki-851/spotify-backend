@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const user = new mongoose.Schema(
+const User = new mongoose.Schema(
   {
     firstname: { type: String, default: "" },
     lastname: { type: String, default: "" },
@@ -10,8 +10,9 @@ const user = new mongoose.Schema(
     likedSongs: { type: String },
     likedPlaylists: { type: String },
     subscribedArtists: { type: String },
+    code: { type: String },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", user);
+module.exports = mongoose.model("User", User);
